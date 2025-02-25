@@ -1,1 +1,1 @@
-# EEHPAEnergy Efficient Horizontal Pod Autoscaler
+# EEHPA: Energy Efficient Horizontal Pod Autoscaler
