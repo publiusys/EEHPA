@@ -1,0 +1,31 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dsb-hotelres
+  labels:
+    app: dsb-hotelres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dsb-hotelres
+  template:
+    metadata:
+      labels:
+        app: dsb-hotelres
+      name: dsb-hotelres
+    spec:
+      nodeName: client1.hand32-249077.bayopsys-pg0.wisc.cloudlab.us
+      volumes:
+        - name: log-share
+          emptyDir: {}
+      containers:
+      - name: dsb-hotelres
+        image: quay.io/centos/centos:stream9
+        imagePullPolicy: Always
+        volumeMounts:
+          - mountPath: /sharelogs/
+            name: log-share
+        command: ["/bin/bash", "-c"]
+        args: ["dnf -y update; dnf -y install epel-release; dnf -y install gcc gcc-c++ git make emacs wget readline-devel unzip compat-openssl11 openssl-devel bzip2-devel libffi-devel zlib-devel python3-pip; yum groupinstall 'Development Tools' -y; cd /; git clone https://github.com/handong32/peakler.git; wget https://www.lua.org/ftp/lua-5.1.5.tar.gz; tar -xf lua-5.1.5.tar.gz; cd lua-5.1.5; make linux; make all test; make install; cd /; wget https://luarocks.org/releases/luarocks-2.4.2.tar.gz; tar -xf luarocks-2.4.2.tar.gz; cd luarocks-2.4.2; ./configure && make && make install; export PATH=$PATH:/usr/local/bin; luarocks-5.1 install luasocket; cd /peakler/experiments/cilantro && tar -xf cilantro_awsecr.tar.gz; ln -s /peakler/experiments/cilantro/cilantro_awsecr/driver/ /driver; ln -s /peakler/experiments/cilantro/cilantro_awsecr/wrk2/ /wrk2; cd /; chmod 777 /wrk2/wrk; git clone https://github.com/handong32/cilantro.git; pip3 install numpy statsmodels pylint; cd /cilantro/; pip3 install -r requirements.txt; pip3 install -e .; echo SLEEPING; sleep 30d;"]
