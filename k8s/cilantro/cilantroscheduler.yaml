@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cilantroscheduler
+  labels:
+    app: cilantroscheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cilantroscheduler
+  template:
+    metadata:
+      labels:
+        app: cilantroscheduler
+    spec:
+      nodeName: node0.hand32-249389.bayopsys-pg0.wisc.cloudlab.us
+      containers:
+      - name: cilantroscheduler
+        image: quay.io/centos/centos:stream8
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 10000
+        command:
+          - '/bin/bash'
+          - '-c'
+          - >
+            cd /etc/yum.repos.d/ && sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*;
+            cd /;
+            dnf -y update;
+            dnf -y install epel-release;
+            dnf -y install gcc gcc-c++ git make emacs python3 python3-pip python3-devel;
+            pip3 install numpy statsmodels pylint;
+            git clone https://github.com/handong32/cilantro.git;
+            cd /cilantro;
+            pip3 install -r requirements.txt;
+            pip3 install -e .;
+            cd /;
+            python3 /cilantro/experiments/microservices/driver.py --real-or-dummy real --policy ucbopt
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cilantro-service
+spec:
+  selector:
+    app: cilantroscheduler
+  ports:
+    - protocol: TCP
+      port: 10000
+      targetPort: 10000
