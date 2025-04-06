@@ -2,9 +2,9 @@
 
 #set -x
 
-export NITERS=${NITERS:=2}
+export NITERS=${NITERS:=3}
 export WORKERS=${WORKERS:="192.168.1.2 192.168.1.3 192.168.1.4 192.168.1.5"}
-export SCHED=${SCHED:="performance"}
+export SCHED=${SCHED:="optimal"}
 
 mkdir -p $SCHED/results
 
@@ -15,7 +15,7 @@ done
 for ((t=0;t<$NITERS;t++)); do
     kubectl cp $(kubectl get pods | awk '/hr-client/ {print $1;exit}'):/cilantrologs $SCHED/results/cilantrologs
     kubectl cp $(kubectl get pods | awk '/hr-client/ {print $1;exit}'):/nohup.out $SCHED/results/nohup.out
-    kubectl cp -c ax-server $(kubectl get pods | awk '/hr-client/ {print $1;exit}'):/peakler/kapi/peaks $SCHED/results/peaks
+    #kubectl cp -c ax-server $(kubectl get pods | awk '/hr-client/ {print $1;exit}'):/peakler/kapi/peaks $SCHED/results/peaks
 
     kubectl get pods -o wide > $SCHED/results/kubectl.pods.$t
     kubectl get pods -o wide --all-namespaces > $SCHED/results/kubectl-all-namespaces.pods.$t
