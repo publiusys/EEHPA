@@ -30,7 +30,7 @@ This launches both hr-client and cilantro-hr-client
 `hr-client` is for running wrk2 workload generator to get the tail latency distributions of running the benchmark
 `cilantro-hr-client` is the RPC mechanism to pipe output of `hr-client` to `cilantroscheduler` such that it can then make autoscaling decisions
 ```
-hand32@node0:~/peakler/experiments/cilantro/dev$ kubectl apply -f cilantroscheduler.yaml
+hand32@node0:~/peakler/experiments/cilantro/dev$ kubectl apply -f cilantro-hr-client.yaml
 ```
 
 An example run of `hr-client`, where it generates a load of 3000 RPS for 30 seconds and outputs the data to `/cilantrologs/`
